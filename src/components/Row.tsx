@@ -4,7 +4,7 @@ import { IRow } from "./types";
 
 function Row(props: IRow) {
   const row = props.cells.map((cell, index) => {
-    return <Cell isFilled={cell.isFilled} key={index} />;
+    return <Cell {...cell} key={index} />;
   });
   return <div className="row">{row}</div>;
 }

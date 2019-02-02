@@ -1,5 +1,8 @@
 export interface ICell {
   isFilled: boolean;
+  isBlock: boolean;
+  rowIndex: number;
+  columnIndex: number;
 }
 
 export interface IRow {
