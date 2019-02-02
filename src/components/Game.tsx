@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import Board from "./Board";
-import { IBoard, ICell } from "./types";
-import Cell from "./Cell";
+import { IBlock, BlockHelper } from "./Block";
+import { IBoard } from "./types";
 
-const ROW_COUNT = 15;
-const COLUMN_COUNT = 15;
+const ROW_COUNT = 20;
+const COLUMN_COUNT = 20;
 
 interface IGameProps {}
 
@@ -13,16 +13,12 @@ interface IGameState {
   currentBlock?: IBlock;
 }
 
-interface IBlock {
-  cells: ICell[];
-  leftTopCell?: ICell;
-  rightBottomCell?: ICell;
-}
-
 class Game extends Component<IGameProps, IGameState> {
+  private blockHelper: BlockHelper;
   constructor(props) {
     super(props);
 
+    this.blockHelper = new BlockHelper(ROW_COUNT, COLUMN_COUNT);
     this.state = {
       board: {
         rows: new Array(ROW_COUNT).fill(1).map((_rowItem, rowIndex) => {
@@ -43,67 +39,10 @@ class Game extends Component<IGameProps, IGameState> {
       currentBlock: undefined
     };
 
-    this._getNewBlock = this._getNewBlock.bind(this);
     this._calculateNewBoard = this._calculateNewBoard.bind(this);
     this._handleKeydown = this._handleKeydown.bind(this);
-    this._clearBlock = this._clearBlock.bind(this);
   }
-
-  _getNewBlock() {
-    return {
-      cells: [{ columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true }]
-    };
-  }
-
-  _clearBlock(board: IBoard) {
-    board.rows.forEach(row => {
-      row.cells.forEach(cell => {
-        if (cell.isBlock === true) {
-          cell.isFilled = false;
-          cell.isBlock = false;
-        }
-      });
-    });
-  }
-
-  _moveBlockUp(block: IBlock): IBlock {
-    return {
-      cells: block.cells.map(cell => {
-        return { ...cell, rowIndex: Math.max(cell.rowIndex - 1, 0) };
-      })
-    };
-  }
-  _moveBlockDown(block: IBlock): IBlock {
-    return {
-      cells: block.cells.map(cell => {
-        return {
-          ...cell,
-          rowIndex: Math.min(cell.rowIndex + 1, ROW_COUNT - 1)
-        };
-      })
-    };
-  }
-  _moveBlockRight(block: IBlock): IBlock {
-    return {
-      cells: block.cells.map(cell => {
-        return {
-          ...cell,
-          columnIndex: Math.min(cell.columnIndex + 1, COLUMN_COUNT - 1)
-        };
-      })
-    };
-  }
-  _moveBlockLeft(block: IBlock): IBlock {
-    return {
-      cells: block.cells.map(cell => {
-        return {
-          ...cell,
-          columnIndex: Math.max(cell.columnIndex - 1, 0)
-        };
-      })
-    };
-  }
-
+  
   _calculateNewBoard(newBoard: IBoard, block: IBlock): IBoard {
     block.cells.forEach(cell => {
       newBoard.rows[cell.rowIndex].cells[cell.columnIndex].isFilled = true;
@@ -117,15 +56,17 @@ class Game extends Component<IGameProps, IGameState> {
     switch (e.code) {
       case "ArrowDown":
         if (this.state.currentBlock === undefined) {
-          const newBlock: IBlock = this._getNewBlock();
+          const newBlock: IBlock = this.blockHelper.getNewBlock();
           this.setState({
             board: this._calculateNewBoard(this.state.board, newBlock),
             currentBlock: newBlock
           });
         } else {
           const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
-          this._clearBlock(newBoard);
-          const newBlock: IBlock = this._moveBlockDown(this.state.currentBlock);
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.moveBlockDown(
+            this.state.currentBlock
+          );
           this.setState({
             board: this._calculateNewBoard(newBoard, newBlock),
             currentBlock: newBlock
@@ -136,8 +77,10 @@ class Game extends Component<IGameProps, IGameState> {
         {
           if (this.state.currentBlock === undefined) return;
           const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
-          this._clearBlock(newBoard);
-          const newBlock: IBlock = this._moveBlockUp(this.state.currentBlock);
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.moveBlockUp(
+            this.state.currentBlock
+          );
           this.setState({
             board: this._calculateNewBoard(newBoard, newBlock),
             currentBlock: newBlock
@@ -148,8 +91,8 @@ class Game extends Component<IGameProps, IGameState> {
         {
           if (this.state.currentBlock === undefined) return;
           const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
-          this._clearBlock(newBoard);
-          const newBlock: IBlock = this._moveBlockRight(
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.moveBlockRight(
             this.state.currentBlock
           );
           console.log(newBlock);
@@ -163,8 +106,10 @@ class Game extends Component<IGameProps, IGameState> {
         {
           if (this.state.currentBlock === undefined) return;
           const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
-          this._clearBlock(newBoard);
-          const newBlock: IBlock = this._moveBlockLeft(this.state.currentBlock);
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.moveBlockLeft(
+            this.state.currentBlock
+          );
           this.setState({
             board: this._calculateNewBoard(newBoard, newBlock),
             currentBlock: newBlock
