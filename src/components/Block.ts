@@ -18,10 +18,11 @@ export class BlockHelper {
   getNewBlock(): IBlock {
     return {
       cells: [
-        { columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true },
         { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
-        { columnIndex: 2, rowIndex: 0, isFilled: true, isBlock: true },
-        { columnIndex: 0, rowIndex: 1, isFilled: true, isBlock: true }
+        { columnIndex: 0, rowIndex: 1, isFilled: true, isBlock: true },
+        { columnIndex: 1, rowIndex: 1, isFilled: true, isBlock: true },
+        { columnIndex: 2, rowIndex: 1, isFilled: true, isBlock: true },
+        { columnIndex: 1, rowIndex: 2, isFilled: true, isBlock: true }
       ],
       leftTopCell: {
         columnIndex: 0,
@@ -31,11 +32,51 @@ export class BlockHelper {
       },
       rightBottomCell: {
         columnIndex: 2,
-        rowIndex: 1,
+        rowIndex: 2,
         isFilled: true,
         isBlock: true
       }
     };
+    // return {
+    //   cells: [
+    //     { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
+    //     { columnIndex: 1, rowIndex: 1, isFilled: true, isBlock: true },
+    //     { columnIndex: 1, rowIndex: 2, isFilled: true, isBlock: true },
+    //     { columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true }
+    //   ],
+    //   leftTopCell: {
+    //     columnIndex: 0,
+    //     rowIndex: 0,
+    //     isFilled: true,
+    //     isBlock: true
+    //   },
+    //   rightBottomCell: {
+    //     columnIndex: 1,
+    //     rowIndex: 2,
+    //     isFilled: true,
+    //     isBlock: true
+    //   }
+    // };
+    // return {
+    //   cells: [
+    //     { columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true },
+    //     { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
+    //     { columnIndex: 2, rowIndex: 0, isFilled: true, isBlock: true },
+    //     { columnIndex: 0, rowIndex: 1, isFilled: true, isBlock: true }
+    //   ],
+    //   leftTopCell: {
+    //     columnIndex: 0,
+    //     rowIndex: 0,
+    //     isFilled: true,
+    //     isBlock: true
+    //   },
+    //   rightBottomCell: {
+    //     columnIndex: 2,
+    //     rowIndex: 1,
+    //     isFilled: true,
+    //     isBlock: true
+    //   }
+    // };
   }
 
   clearBlock(board: IBoard) {
