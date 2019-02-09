@@ -42,7 +42,7 @@ class Game extends Component<IGameProps, IGameState> {
     this._calculateNewBoard = this._calculateNewBoard.bind(this);
     this._handleKeydown = this._handleKeydown.bind(this);
   }
-  
+
   _calculateNewBoard(newBoard: IBoard, block: IBlock): IBoard {
     block.cells.forEach(cell => {
       newBoard.rows[cell.rowIndex].cells[cell.columnIndex].isFilled = true;
@@ -52,7 +52,6 @@ class Game extends Component<IGameProps, IGameState> {
   }
 
   _handleKeydown(e) {
-    console.log(e);
     switch (e.code) {
       case "ArrowDown":
         if (this.state.currentBlock === undefined) {
@@ -95,7 +94,6 @@ class Game extends Component<IGameProps, IGameState> {
           const newBlock: IBlock = this.blockHelper.moveBlockRight(
             this.state.currentBlock
           );
-          console.log(newBlock);
           this.setState({
             board: this._calculateNewBoard(newBoard, newBlock),
             currentBlock: newBlock
@@ -108,6 +106,34 @@ class Game extends Component<IGameProps, IGameState> {
           const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
           this.blockHelper.clearBlock(newBoard);
           const newBlock: IBlock = this.blockHelper.moveBlockLeft(
+            this.state.currentBlock
+          );
+          this.setState({
+            board: this._calculateNewBoard(newBoard, newBlock),
+            currentBlock: newBlock
+          });
+        }
+        break;
+      case "KeyA":
+        {
+          if (this.state.currentBlock === undefined) return;
+          const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.rotateLeft(
+            this.state.currentBlock
+          );
+          this.setState({
+            board: this._calculateNewBoard(newBoard, newBlock),
+            currentBlock: newBlock
+          });
+        }
+        break;
+      case "KeyD":
+        {
+          if (this.state.currentBlock === undefined) return;
+          const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
+          this.blockHelper.clearBlock(newBoard);
+          const newBlock: IBlock = this.blockHelper.rotateRight(
             this.state.currentBlock
           );
           this.setState({
