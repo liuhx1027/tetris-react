@@ -97,6 +97,13 @@ export class BlockHelper {
       maxRadius: block.maxRadius
     };
   }
+  public moveBlockToBottom(block: IBlock): IBlock {
+    let result = this.moveBlockDown(block);
+    while (this._getRightBottomCell(result).rowIndex < this._rowCount - 1) {
+      result = this.moveBlockDown(result);
+    }
+    return result;
+  }
   public moveBlockRight(block: IBlock): IBlock {
     const rightBottomCell = this._getRightBottomCell(block);
     if (rightBottomCell.columnIndex >= this._columnCount - 1) {

@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import Board from "./Board";
 import { BlockHelper } from "./Block";
 import { IBoard, IBlock } from "./types";
-import { ShapeType, ALL_SHAPES } from "./const";
-
-const ROW_COUNT = 20;
-const COLUMN_COUNT = 20;
+import {
+  ShapeType,
+  ALL_SHAPES,
+  ROW_COUNT,
+  COLUMN_COUNT,
+  INTERVAL
+} from "./const";
 
 interface IGameProps {}
 
@@ -52,28 +55,48 @@ class Game extends Component<IGameProps, IGameState> {
     return newBoard;
   }
 
+  _triggerIntervalRunning() {
+    setTimeout(() => {
+      if (this.state.currentBlock === undefined) return;
+      const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
+      this.blockHelper.clearBlock(newBoard);
+      const newBlock: IBlock = this.blockHelper.moveBlockDown(
+        this.state.currentBlock
+      );
+      this.setState({
+        board: this._calculateNewBoard(newBoard, newBlock),
+        currentBlock: newBlock
+      });
+      this._triggerIntervalRunning();
+    }, INTERVAL);
+  }
+
   _handleKeydown(e) {
     switch (e.code) {
-      case "ArrowDown":
-        if (this.state.currentBlock === undefined) {
-          const newBlock: IBlock | undefined = ALL_SHAPES.get(ShapeType.L);
-          if (!newBlock) return;
-          
-          this.setState({
-            board: this._calculateNewBoard(this.state.board, newBlock),
-            currentBlock: newBlock
-          });
-        } else {
-          const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
-          this.blockHelper.clearBlock(newBoard);
-          const newBlock: IBlock = this.blockHelper.moveBlockDown(
-            this.state.currentBlock
-          );
-          this.setState({
-            board: this._calculateNewBoard(newBoard, newBlock),
-            currentBlock: newBlock
-          });
+      case "Space":
+        {
+          if (this.state.currentBlock === undefined) {
+            const newBlock: IBlock | undefined = ALL_SHAPES.get(ShapeType.L);
+            if (!newBlock) return;
+            this.setState({
+              board: this._calculateNewBoard(this.state.board, newBlock),
+              currentBlock: newBlock
+            });
+            this._triggerIntervalRunning();
+          }
         }
+        break;
+      case "ArrowDown":
+        if (this.state.currentBlock === undefined) return;
+        const newBoard: IBoard = JSON.parse(JSON.stringify(this.state.board));
+        this.blockHelper.clearBlock(newBoard);
+        const newBlock: IBlock = this.blockHelper.moveBlockToBottom(
+          this.state.currentBlock
+        );
+        this.setState({
+          board: this._calculateNewBoard(newBoard, newBlock),
+          currentBlock: newBlock
+        });
         break;
       case "ArrowUp":
         {
@@ -145,6 +168,8 @@ class Game extends Component<IGameProps, IGameState> {
           });
         }
         break;
+      default:
+        console.log(e);
     }
   }
 
