@@ -12,3 +12,9 @@ export interface IRow {
 export interface IBoard {
   rows: IRow[];
 }
+
+export type IBlock = {
+  cells: ICell[];
+  origin: ICell;
+  maxRadius: number;
+};

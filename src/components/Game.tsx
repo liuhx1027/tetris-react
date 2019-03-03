@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Board from "./Board";
-import { IBlock, BlockHelper } from "./Block";
-import { IBoard } from "./types";
+import { BlockHelper } from "./Block";
+import { IBoard, IBlock } from "./types";
+import { ShapeType, ALL_SHAPES } from "./const";
 
 const ROW_COUNT = 20;
 const COLUMN_COUNT = 20;
@@ -55,7 +56,9 @@ class Game extends Component<IGameProps, IGameState> {
     switch (e.code) {
       case "ArrowDown":
         if (this.state.currentBlock === undefined) {
-          const newBlock: IBlock = this.blockHelper.getNewBlock();
+          const newBlock: IBlock | undefined = ALL_SHAPES.get(ShapeType.L);
+          if (!newBlock) return;
+          
           this.setState({
             board: this._calculateNewBoard(this.state.board, newBlock),
             currentBlock: newBlock

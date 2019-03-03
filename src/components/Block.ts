@@ -1,15 +1,9 @@
-import { ICell, IBoard } from "./types";
-
-export type IBlock = {
-  cells: ICell[];
-  origin: ICell;
-  maxRadius: number;
-};
+import { ICell, IBoard, IBlock } from "./types";
+import * as CONSTS from "./const";
 
 export class BlockHelper {
   private _rowCount: number;
   private _columnCount: number;
-  private _MAX_NUMBER: number = 9999;
 
   constructor(ROW_COUNT, COLUMN_COUNT) {
     this._rowCount = ROW_COUNT;
@@ -17,38 +11,13 @@ export class BlockHelper {
   }
 
   getNewBlock(): IBlock {
-    // return {
-    //   cells: [
-    //     { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
-    //     { columnIndex: 0, rowIndex: 1, isFilled: true, isBlock: true },
-    //     { columnIndex: 1, rowIndex: 1, isFilled: true, isBlock: true },
-    //     { columnIndex: 2, rowIndex: 1, isFilled: true, isBlock: true },
-    //     { columnIndex: 1, rowIndex: 2, isFilled: true, isBlock: true }
-    //   ],
-    // };
-    // return {
-    //   cells: [
-    //     { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
-    //     { columnIndex: 1, rowIndex: 1, isFilled: true, isBlock: true },
-    //     { columnIndex: 1, rowIndex: 2, isFilled: true, isBlock: true },
-    //     { columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true }
-    //   ],
-    // };
-    return {
-      cells: [
-        { columnIndex: 0, rowIndex: 0, isFilled: true, isBlock: true },
-        { columnIndex: 1, rowIndex: 0, isFilled: true, isBlock: true },
-        { columnIndex: 2, rowIndex: 0, isFilled: true, isBlock: true },
-        { columnIndex: 0, rowIndex: 1, isFilled: true, isBlock: true }
-      ],
-      origin: { columnIndex: 1, rowIndex: 1, isFilled: false, isBlock: false },
-      maxRadius: 1
-    };
+    // T
+    return CONSTS.SHAPE_L;
   }
 
   private _getLeftTopCell(block: IBlock): ICell {
-    let columnIndex = this._MAX_NUMBER;
-    let rowIndex = this._MAX_NUMBER;
+    let columnIndex = this._columnCount;
+    let rowIndex = this._rowCount;
     block.cells.forEach(cell => {
       if (columnIndex > cell.columnIndex) columnIndex = cell.columnIndex;
       if (rowIndex > cell.rowIndex) rowIndex = cell.rowIndex;
@@ -78,7 +47,17 @@ export class BlockHelper {
     };
   }
 
-  clearBlock(board: IBoard) {
+  private _copyBlock(block: IBlock): IBlock {
+    return {
+      cells: block.cells.map(cell => {
+        return { ...cell };
+      }),
+      origin: { ...block.origin },
+      maxRadius: block.maxRadius
+    };
+  }
+
+  public clearBlock(board: IBoard) {
     board.rows.forEach(row => {
       row.cells.forEach(cell => {
         if (cell.isBlock === true) {
@@ -89,20 +68,10 @@ export class BlockHelper {
     });
   }
 
-  copyBlock(block: IBlock): IBlock {
-    return {
-      cells: block.cells.map(cell => {
-        return { ...cell };
-      }),
-      origin: { ...block.origin },
-      maxRadius: block.maxRadius
-    };
-  }
-
-  moveBlockUp(block: IBlock): IBlock {
+  public moveBlockUp(block: IBlock): IBlock {
     const leftTopCell = this._getLeftTopCell(block);
     if (leftTopCell && leftTopCell.rowIndex <= 0) {
-      return this.copyBlock(block);
+      return this._copyBlock(block);
     }
     return {
       cells: block.cells.map(cell => {
@@ -112,10 +81,10 @@ export class BlockHelper {
       maxRadius: block.maxRadius
     };
   }
-  moveBlockDown(block: IBlock): IBlock {
+  public moveBlockDown(block: IBlock): IBlock {
     const rightBottomCell = this._getRightBottomCell(block);
     if (rightBottomCell.rowIndex >= this._rowCount - 1) {
-      return this.copyBlock(block);
+      return this._copyBlock(block);
     }
     return {
       cells: block.cells.map(cell => {
@@ -128,10 +97,10 @@ export class BlockHelper {
       maxRadius: block.maxRadius
     };
   }
-  moveBlockRight(block: IBlock): IBlock {
+  public moveBlockRight(block: IBlock): IBlock {
     const rightBottomCell = this._getRightBottomCell(block);
     if (rightBottomCell.columnIndex >= this._columnCount - 1) {
-      return this.copyBlock(block);
+      return this._copyBlock(block);
     }
     return {
       cells: block.cells.map(cell => {
@@ -144,10 +113,10 @@ export class BlockHelper {
       maxRadius: block.maxRadius
     };
   }
-  moveBlockLeft(block: IBlock): IBlock {
+  public moveBlockLeft(block: IBlock): IBlock {
     const leftTopCell = this._getLeftTopCell(block);
     if (leftTopCell && leftTopCell.columnIndex <= 0) {
-      return this.copyBlock(block);
+      return this._copyBlock(block);
     }
     return {
       cells: block.cells.map(cell => {
@@ -170,9 +139,8 @@ export class BlockHelper {
       block.origin.rowIndex - block.maxRadius >= 0
     );
   }
-
-  rotateLeft(block: IBlock): IBlock {
-    if (this._canRotate(block) === false) return this.copyBlock(block);
+  public rotateLeft(block: IBlock): IBlock {
+    if (this._canRotate(block) === false) return this._copyBlock(block);
 
     return {
       origin: { ...block.origin },
@@ -214,9 +182,8 @@ export class BlockHelper {
       })
     };
   }
-
-  rotateRight(block: IBlock): IBlock {
-    if (this._canRotate(block) === false) return this.copyBlock(block);
+  public rotateRight(block: IBlock): IBlock {
+    if (this._canRotate(block) === false) return this._copyBlock(block);
     return {
       origin: { ...block.origin },
       maxRadius: block.maxRadius,
